@@ -7,12 +7,21 @@
 // @match        https://www.bilibili.com/video/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=bilibili.com
 // @grant        none
+// @run-at       window-load
 // ==/UserScript==
 
 (function() {
     'use strict';
 
     // Your code here...
+
+    function convertSecondsToHoursMinutes(seconds) {
+        var hours = Math.floor(seconds / 3600); // 将总秒数转换为小时数
+        var minutes = Math.floor((seconds % 3600) / 60); // 计算剩余秒数转换为分钟数
+
+        return hours + "小时" + minutes + "分钟";
+    }
+
     let bvPattern = /BV([0-9a-zA-Z])+/g;
     let aidPattern = /"aid":(\d+)/;
     let url = window.location.href;
@@ -41,16 +50,19 @@
                         console.log(percent)
                         p.percent = percent
                     }
+                    console.log()
+                    let newDiv = document.createElement('div')
+                    newDiv.textContent = convertSecondsToHoursMinutes(cum)
+                    let headCon = document.querySelector('.head-con')
+                    headCon.insertBefore(newDiv,headCon.querySelector('.head-right'));
+
                     let liElements = document.getElementById('multi_page').querySelectorAll('li');
                     console.log(liElements)
                     for (let i=0; i < liElements.length; i++){
                         const li = liElements[i]
                         let pageNum = li.querySelector('.page-num')
                         pageNum.textContent = pList[i].percent + '% ' + pageNum.textContent
-
                     }
-
-
 
                 }
 
@@ -59,5 +71,7 @@
         }
     }
     xhr.send();
+
+
 
 })();
